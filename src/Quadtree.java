@@ -19,11 +19,19 @@ public class Quadtree {
     private boolean leaf;
     
     /**
-     * Initializes a new Quadtree node with a bounds and a level
+     * Initializes a new Quadtree node with bounds
+     * @param pbounds - bounds of the new node (one quarter of the parent node)
+     */
+    public Quadtree(Rectangle pBounds) {
+        this(0, pBounds);
+    }
+    
+    /**
+     * Initializes a new Quadtree node with bounds and a level
      * @param pLevel - level of the new node (top level = 0)
      * @param pbounds - bounds of the new node (one quarter of the parent node)
      */
-    public Quadtree(int pLevel, Rectangle pBounds) {
+    private Quadtree(int pLevel, Rectangle pBounds) {
         level = pLevel;
         bounds = pBounds;
         objects = new ArrayList<Shape>();
@@ -59,6 +67,28 @@ public class Quadtree {
     	// if failed to fit into child, add here
 		objects.add(s);
 		return level;
+    }
+    
+    /**
+     * Get all objects at this node
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+	public ArrayList<Shape> getAll() {
+    	if(leaf) { return (ArrayList<Shape>) objects.clone(); }
+    	ArrayList<Shape> obj = nodes[0].getAll();
+    	for(int i = 1; i < nodes.length; i++) {
+    		obj.addAll(nodes[i].getAll());
+    	}
+    	obj.addAll(objects);
+    	return obj;
+    }
+    
+    /**
+     * @return all the child nodes of this Quadtree
+     */
+    public Quadtree[] getChildren() {
+    	return nodes;
     }
     
     /**
