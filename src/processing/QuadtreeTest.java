@@ -17,14 +17,9 @@ public class QuadtreeTest extends PApplet{
 
     public void setup() {
         size(WIDTH, HEIGHT);
-        background(256f);
+        background(100);
 
         q = new Quadtree(new Rectangle(0, 0, WIDTH, HEIGHT));
-        q.add(new Rectangle(0, 0, 10, 10));
-        q.add(new Rectangle(20, 0, 10, 10));
-        q.add(new Rectangle(30, 0, 10, 10));
-        q.add(new Rectangle(40, 0, 10, 10));
-        q.add(new Rectangle(60, 0, 10, 10));
     }
 
     public void draw() {
@@ -32,11 +27,10 @@ public class QuadtreeTest extends PApplet{
     }
 
     public void mouseClicked() {
-        q.add(new Rectangle(mouseX - 5, mouseY - 5, 10, 10));
+        q.add(new Rectangle(mouseX - 10, mouseY - 10, 20, 20));
     }
 
     public void drawQuad(Quadtree curr) {
-        drawBounds(curr.bounds(), curr.level());
         for (Shape s : curr.getImmediate()) {
             drawRectangle((Rectangle) s, curr.level());
         }
@@ -46,17 +40,18 @@ public class QuadtreeTest extends PApplet{
                 drawQuad(b);
             }
         }
+        drawBounds(curr.bounds(), curr.level());
     }
 
     public void drawBounds(Rectangle r, int level) {
         noFill();
-        stroke(20 * level);
+        stroke(0);
         rect(r.x, r.y, r.width, r.height);
     }
 
     public void drawRectangle(Rectangle r, int level) {
-        stroke(255, 100, 100);
-        fill(100);
+        stroke(0);
+        fill(128, 50 * level, 256, 50);
         rect(r.x, r.y, r.width, r.height);
     }
 
