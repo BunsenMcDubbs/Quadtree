@@ -1,4 +1,5 @@
-import java.awt.Point;
+package quadtree;
+
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ import java.util.ArrayList;
  */
 public class Quadtree {
 
-    public static final int MAX_OBJECTS = 10;
+    public static final int MAX_OBJECTS = 4;
 
     private Quadtree[] nodes;
     private int level;
@@ -19,37 +20,37 @@ public class Quadtree {
     private boolean leaf;
     
     /**
-     * Initializes a new Quadtree node with bounds
-     * @param pbounds - bounds of the new node (one quarter of the parent node)
+     * Initializes a new quadtree.Quadtree node with bounds
+     * @param pBounds - bounds of the new node (one quarter of the parent node)
      */
     public Quadtree(Rectangle pBounds) {
         this(0, pBounds);
     }
     
     /**
-     * Initializes a new Quadtree node with bounds and a level
+     * Initializes a new quadtree.Quadtree node with bounds and a level
      * @param pLevel - level of the new node (top level = 0)
-     * @param pbounds - bounds of the new node (one quarter of the parent node)
+     * @param pBounds - bounds of the new node (one quarter of the parent node)
      */
     private Quadtree(int pLevel, Rectangle pBounds) {
         level = pLevel;
         bounds = pBounds;
         objects = new ArrayList<Shape>();
         nodes = new Quadtree[4];
-        leaf = false;
+        leaf = true;
     }
 
     /**
-     * Add a shape into the Quadtree.
+     * Add a shape into the quadtree.Quadtree.
      *  - It can be added to this node (if density hasn't been reached).
-     *  - Added to this node if children don't completely encompass the shape.
+     *  - Added to this node if children don't completely contains the shape.
      *  - Added to child node.
      *  - Rejected because it doesn't fit in this or child nodes (return -1)
-     * @param s - shape to be added to the Quadtree
+     * @param s - shape to be added to the quadtree.Quadtree
      * @return the level that the shape was added to.
      */
     public int add(Shape s) {
-    	if(!this.encompasses(s)) {
+    	if(!this.contains(s)) {
     		return -1; // TODO error code! redo with exception
     	}
     	if(leaf && objects.size() >= MAX_OBJECTS) {
@@ -59,7 +60,7 @@ public class Quadtree {
     	if(!leaf) { 
     		for (Quadtree q : nodes) {
     			// successfully added s into child node
-    			if(q.encompasses(s)) {
+    			if(q.contains(s)) {
     				return q.add(s);
     			}
     		}
@@ -75,7 +76,7 @@ public class Quadtree {
      */
     @SuppressWarnings("unchecked")
 	public ArrayList<Shape> getAll() {
-    	if(leaf) { return (ArrayList<Shape>) objects.clone(); }
+    	if(leaf) { return getImmediate(); }
     	ArrayList<Shape> obj = nodes[0].getAll();
     	for(int i = 1; i < nodes.length; i++) {
     		obj.addAll(nodes[i].getAll());
@@ -83,32 +84,39 @@ public class Quadtree {
     	obj.addAll(objects);
     	return obj;
     }
+
+	public ArrayList<Shape> getImmediate() {
+		return (ArrayList<Shape>) objects.clone();
+	}
     
     /**
-     * @return all the child nodes of this Quadtree
+     * @return all the child nodes of this quadtree.Quadtree
      */
     public Quadtree[] getChildren() {
     	return nodes;
     }
+
+	public boolean isLeaf() { return leaf; }
+
+	public int level() { return level; }
+
+	public Rectangle bounds() { return bounds; }
     
     /**
      * Similar to contains() except it checks if the entire shape (bounding box)
      * is contained inside the bounds of this node.
      * @param s - shape in question
-     * @return true if this node complete encompasses the shape
+     * @return true if this node complete contains the shape
      */
-	private boolean encompasses(Shape s) {
-		Rectangle sb = s.getBounds();
-		Point leftTop = new Point(sb.x, sb.y);
-		Point rightBottom = new Point(sb.x + sb.width, sb.y + sb.height);
-		return bounds.contains(leftTop) && bounds.contains(rightBottom);
+	private boolean contains(Shape s) {
+		return bounds.contains(s.getBounds());
 	}
 
 	/**
-	 * Splits the Quadtree into nodes and adds the shapes to the proper children
+	 * Splits the quadtree.Quadtree into nodes and adds the shapes to the proper children
 	 */
 	private void split() {
-		leaf = true;
+		leaf = false;
 		int nWidth = bounds.width / 2;
 		int nHeight = bounds.height / 2;
 		nodes[0] = new Quadtree(level + 1, new Rectangle(bounds.x, bounds.y, nWidth, nHeight));
@@ -122,6 +130,42 @@ public class Quadtree {
 		for(Shape s : objs) {
 			add(s);
 		}
+	}
+
+	public String toString() {
+		String s = "";
+		s += "Level " + level + "\n";
+		for (int j = 0; j < level; j++) {
+			s += "\t";
+		}
+		s += "Shapes: [";
+		if (objects.size() > 0) {
+			s += objects.get(0).toString();
+		}
+		for (int i = 1; i < objects.size(); i++) {
+			s += ", " + objects.toString();
+		}
+		s += "]\n";
+//		if (!leaf) {
+//			for (int i = 0; i < nodes.length; i++) {
+//				for (int j = 0; j < nodes[i].level; j++) {
+//					s += "\t";
+//				}
+//				s += "Node " + i + ": " + nodes[i].toString();
+//			}
+//		}
+		return s;
+	}
+
+	public static void main(String[] args) {
+		Quadtree q = new Quadtree(new Rectangle(0, 0, 100, 100));
+		q.add(new Rectangle(0, 0, 10, 10));
+		q.add(new Rectangle(20, 0, 10, 10));
+		q.add(new Rectangle(30, 0, 10, 10));
+		q.add(new Rectangle(40, 0, 10, 10));
+		q.add(new Rectangle(60, 0, 10, 10));
+
+		System.out.println(q);
 	}
 
 }
