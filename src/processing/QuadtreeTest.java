@@ -7,6 +7,8 @@ import java.awt.*;
 
 /**
  * Created by andrew on 1/21/15.
+ *
+ * @author Andrew Dai (bunsenmcdubbs)
  */
 public class QuadtreeTest extends PApplet{
 
@@ -14,7 +16,6 @@ public class QuadtreeTest extends PApplet{
     public static int HEIGHT = 640;
 
     public Quadtree q;
-
     public void setup() {
         size(WIDTH, HEIGHT);
         background(100);

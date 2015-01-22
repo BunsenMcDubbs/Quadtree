@@ -3,6 +3,8 @@ package processing;
 import processing.core.PApplet;
 /**
  * Created by andrew on 1/21/15.
+ *
+ * @author Andrew Dai (bunsenmcdubbs)
  */
 public class Main {
 
