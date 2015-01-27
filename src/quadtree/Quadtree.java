@@ -35,10 +35,14 @@ public class Quadtree {
     private Quadtree(int pLevel, Rectangle pBounds) {
         level = pLevel;
         bounds = pBounds;
-        objects = new ArrayList<Shape>();
-        nodes = new Quadtree[4];
-        leaf = true;
+        clear();
     }
+
+	public void clear() {
+		nodes = new Quadtree[4];
+		objects = new ArrayList<Shape>();
+		leaf = true;
+	}
 
     /**
      * Add a shape into the Quadtree.
