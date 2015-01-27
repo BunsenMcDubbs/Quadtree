@@ -176,15 +176,4 @@ public class Quadtree {
 		return s;
 	}
 
-	public static void main(String[] args) {
-		Quadtree q = new Quadtree(new Rectangle(0, 0, 100, 100));
-		q.add(new Rectangle(0, 0, 10, 10));
-		q.add(new Rectangle(20, 0, 10, 10));
-		q.add(new Rectangle(30, 0, 10, 10));
-		q.add(new Rectangle(40, 0, 10, 10));
-		q.add(new Rectangle(60, 0, 10, 10));
-
-		System.out.println(q);
-	}
-
 }
